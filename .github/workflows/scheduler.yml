@@ -1,0 +1,29 @@
+name: Cloud Weather Bot Scheduler
+
+on:
+  schedule:
+    # Türkiye saati ile her sabah 08:00'de çalışır (UTC 05:00)
+    - cron: '0 5 * * *'
+  workflow_dispatch: # İstediğimiz zaman elle test edebilmemiz için
+
+jobs:
+  run-bot:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Kodlari Depodan Cek
+        uses: actions/checkout@v4
+
+      - name: Python Ortamini Kur
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Gerekli Kutuphaneleri Yukle
+        run: pip install requests
+
+      - name: Botu Calistir
+        env:
+          OPENWEATHER_API_KEY: ${{ secrets.OPENWEATHER_API_KEY }}
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          CHAT_ID: ${{ secrets.CHAT_ID }}
+        run: python bot.py
